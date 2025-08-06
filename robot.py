@@ -95,8 +95,14 @@ class MyRobot(commands2.TimedCommandRobot):
             self.container.talonfx.set_control(self.container.motion_magic.with_position(10).with_slot(0))
         else:
             self.container.talonfx.set_control(self.container.motion_magic.with_position(0).with_slot(0))
-        self.container._field1_pub.set(self.container.talonfx.get_position().value_as_double)
+
+        current_rot = self.container.talonfx.get_position().value_as_double
+        self.container._field1_pub.set(current_rot)
         self.container._field2_pub.set(self.container.motion_magic.position)
+
+        rot_to_dist = 5*.0254
+        current_dist = current_rot * rot_to_dist
+        self.container.elevator.setLength(self.container.kElevatorMinLength + current_dist)
 
     def testInit(self) -> None:
         # Cancels all running commands at the start of test mode

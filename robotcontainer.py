@@ -14,7 +14,7 @@ from telemetry import Telemetry
 
 from pathplannerlib.auto import AutoBuilder
 from phoenix6 import swerve
-from wpilib import DriverStation, SmartDashboard
+from wpilib import DriverStation, SmartDashboard, Mechanism2d, MechanismLigament2d
 from wpimath.geometry import Rotation2d
 from wpimath.units import rotationsToRadians
 from phoenix6 import hardware, controls, configs, StatusCode
@@ -73,6 +73,12 @@ class RobotContainer:
 
 
         # Elevator Example Section
+        inches_to_meters = 0.0254
+        self.mech = Mechanism2d(3,3)
+        self.root = self.mech.getRoot("Elevator",2,0)
+        self.kElevatorMinLength = 30 * inches_to_meters
+        self.elevator = self.root.appendLigament("elevator", self.kElevatorMinLength,90)
+        SmartDashboard.putData("Mech2d", self.mech)
         self.talonfx = hardware.TalonFX(10, "canivore")
         self.motion_magic = controls.MotionMagicVoltage(0)
 
