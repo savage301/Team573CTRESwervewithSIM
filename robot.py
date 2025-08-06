@@ -57,6 +57,7 @@ class MyRobot(commands2.TimedCommandRobot):
             self.visionSim.update(self.container.drivetrain.get_state().pose)
             self.cameravis = self.visionSim.getDebugField()
         
+        #print("Current Angle: ", self.container.drivetrain.get_state().pose.rotation().degrees())
         self.add_vision_to_pose_esimate()
         commands2.CommandScheduler.getInstance().run()
 
@@ -89,7 +90,13 @@ class MyRobot(commands2.TimedCommandRobot):
 
     def teleopPeriodic(self) -> None:
         """This function is called periodically during operator control"""
-        pass
+        #pass
+        if self.container._joystick.y().getAsBoolean():
+            self.container.talonfx.set_control(self.container.motion_magic.with_position(10).with_slot(0))
+        else:
+            self.container.talonfx.set_control(self.container.motion_magic.with_position(0).with_slot(0))
+        self.container._field1_pub.set(self.container.talonfx.get_position().value_as_double)
+        self.container._field2_pub.set(self.container.motion_magic.position)
 
     def testInit(self) -> None:
         # Cancels all running commands at the start of test mode
@@ -107,3 +114,4 @@ class MyRobot(commands2.TimedCommandRobot):
                     if  dist < 1:
                         self.container.drivetrain.add_vision_measurement(vision_est[0],vision_est[1],vision_est[2])
                         #print("Odo Pose: ", self.container.drivetrain.get_state().pose, "Vision Est Pose", vision_est[0])
+        
