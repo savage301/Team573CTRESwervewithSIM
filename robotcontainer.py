@@ -21,6 +21,12 @@ from phoenix6 import hardware, controls, configs, StatusCode
 
 import config
 from ntcore import NetworkTableInstance
+import subsystems
+
+
+class Robot:
+    # Defines all subsystems used in the robot, these are used to access the subsystems in commands and other files.
+    elevator = subsystems.Elevator()
 
 
 class RobotContainer:
@@ -71,54 +77,9 @@ class RobotContainer:
 
         self._vision_est = config.Cameras.vision_controller
 
-
-        # Elevator Example Section
-        inches_to_meters = 0.0254
-        self.mech = Mechanism2d(3,3)
-        self.root = self.mech.getRoot("Elevator",2,0)
-        self.kElevatorMinLength = 30 * inches_to_meters
-        self.elevator = self.root.appendLigament("elevator", self.kElevatorMinLength,90)
-        SmartDashboard.putData("Mech2d", self.mech)
-        self.talonfx = hardware.TalonFX(10, "canivore")
-        self.motion_magic = controls.MotionMagicVoltage(0)
-
-        cfg = configs.TalonFXConfiguration()
-
-        # Configure gear ratio
-        fdb = cfg.feedback
-        fdb.sensor_to_mechanism_ratio = 1 # 12.8 rotor rotations per mechanism rotation
-
-        # Configure Motion Magic
-        mm = cfg.motion_magic
-        mm.motion_magic_cruise_velocity = 5 # 5 (mechanism) rotations per second cruise
-        mm.motion_magic_acceleration = 10 # Take approximately 0.5 seconds to reach max vel
-        # Take apprximately 0.1 seconds to reach max accel
-        mm.motion_magic_jerk = 100
-
-        slot0 = cfg.slot0
-        slot0.k_s = 0.25 # Add 0.25 V output to overcome static friction
-        slot0.k_v = 0.12 # A velocity target of 1 rps results in 0.12 V output
-        slot0.k_a = 0.01 # An acceleration of 1 rps/s requires 0.01 V output
-        slot0.k_p = 60 # A position error of 0.2 rotations results in 12 V output
-        slot0.k_i = 0 # No output for integrated error
-        slot0.k_d = 0.5 # A velocity error of 1 rps results in 0.5 V output
-
-        # Retry config apply up to 5 times, report if failure
-        status: StatusCode = StatusCode.STATUS_CODE_NOT_INITIALIZED
-        for _ in range(0, 5):
-            status = self.talonfx.configurator.apply(cfg)
-            if status.is_ok():
-                break
-        if not status.is_ok():
-            print(f"Could not apply configs, error code: {status.name}")
-
-        #Output for logging
-        self._inst = NetworkTableInstance.getDefault()
-        self._table = self._inst.getTable("Mech1")
-        self._field1_pub = self._table.getDoubleTopic("Current Position").publish()
-        self._field2_pub = self._table.getDoubleTopic("Current Setpoint").publish()
+        self._elevator = subsystems.Elevator()
         
-
+        
         # Configure the button bindings
         self.configureButtonBindings()
 

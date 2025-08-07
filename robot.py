@@ -10,12 +10,15 @@ import commands2
 import typing
 import wpiutil
 
-from robotcontainer import RobotContainer
+from robotcontainer import RobotContainer, Robot
 from vision import vision_sim
 from telemetry import Telemetry
 
-from config import Cameras
+from config import Cameras, Elevator
 from wpimath.geometry import Pose2d, Rotation2d
+
+import oi.oi
+import subsystems
 
 class MyRobot(commands2.TimedCommandRobot):
     """
@@ -36,6 +39,8 @@ class MyRobot(commands2.TimedCommandRobot):
         self.container = RobotContainer()
         self.container.drivetrain.reset_pose(Pose2d(5,5,Rotation2d(0)))
 
+
+        oi.oi.OI.map_controls()
         # Init Simulation specifics
         if wpilib.RobotBase.isSimulation():
             self.visionSim = vision_sim.photonvision_sim_setup() #Setup sim vision system
@@ -59,6 +64,7 @@ class MyRobot(commands2.TimedCommandRobot):
         
         #print("Current Angle: ", self.container.drivetrain.get_state().pose.rotation().degrees())
         self.add_vision_to_pose_esimate()
+        subsystems.Elevator.getElevatorDSOutput(Robot.elevator)
         commands2.CommandScheduler.getInstance().run()
 
     def disabledInit(self) -> None:
@@ -91,18 +97,7 @@ class MyRobot(commands2.TimedCommandRobot):
     def teleopPeriodic(self) -> None:
         """This function is called periodically during operator control"""
         #pass
-        if self.container._joystick.y().getAsBoolean():
-            self.container.talonfx.set_control(self.container.motion_magic.with_position(10).with_slot(0))
-        else:
-            self.container.talonfx.set_control(self.container.motion_magic.with_position(0).with_slot(0))
 
-        current_rot = self.container.talonfx.get_position().value_as_double
-        self.container._field1_pub.set(current_rot)
-        self.container._field2_pub.set(self.container.motion_magic.position)
-
-        rot_to_dist = 5*.0254
-        current_dist = current_rot * rot_to_dist
-        self.container.elevator.setLength(self.container.kElevatorMinLength + current_dist)
 
     def testInit(self) -> None:
         # Cancels all running commands at the start of test mode
