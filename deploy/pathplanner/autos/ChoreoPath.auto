@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Raise Elevator"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "ChoreoPath"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Lower Elevator"
           }
         }
       ]

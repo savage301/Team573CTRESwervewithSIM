@@ -12,7 +12,8 @@ from commands2.sysid import SysIdRoutine
 from generated.tuner_constants import TunerConstants
 from telemetry import Telemetry
 
-from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.events import EventTrigger
 from phoenix6 import swerve
 from wpilib import DriverStation, SmartDashboard, Mechanism2d, MechanismLigament2d
 from wpimath.geometry import Rotation2d
@@ -22,6 +23,8 @@ from phoenix6 import hardware, controls, configs, StatusCode
 import config
 from ntcore import NetworkTableInstance
 import subsystems
+import commands.elevator
+
 
 
 class Robot:
@@ -70,16 +73,24 @@ class RobotContainer:
         self._joystick = CommandXboxController(0)
 
         self.drivetrain = TunerConstants.create_drivetrain()
+        self._elevator = subsystems.Elevator()
 
-        # Path follower
+        #Name Commands for Autos these must be done before building the autobuilder
+
+        NamedCommands.registerCommand("Raise Elevator", commands.elevator.setPosition(self._elevator,position=10))
+        NamedCommands.registerCommand("Lower Elevator", commands.elevator.setPosition(self._elevator,position=0))
+
+        # Auto builder
         self._auto_chooser = AutoBuilder.buildAutoChooser("Tests")
         SmartDashboard.putData("Choreo", self._auto_chooser)
 
         self._vision_est = config.Cameras.vision_controller
 
-        self._elevator = subsystems.Elevator()
-        
-        
+
+       
+
+
+
         # Configure the button bindings
         self.configureButtonBindings()
 

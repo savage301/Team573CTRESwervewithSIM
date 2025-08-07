@@ -35,4 +35,4 @@ class OI:
 # #======================== drivetrain ========================#
     #This can be empty as SwerveDriveCustome command is set to run by default in teleopinit.
 	
-Keymap.Elevator.setLevel3.whileTrue(commands.elevator.setPosition(Robot.elevator))
+Keymap.Elevator.setLevel3.whileTrue(commands.elevator.setPosition(Robot.elevator,position=10))

@@ -39,6 +39,12 @@ class Elevator(commands2.SubsystemBase):
         #print("Set Elevator Position")
         self.talonfx.set_control(self.motion_magic.with_position(position).with_slot(0))
 
+    def stopElevator(self):
+        self.talonfx.set(0)
+    
+    def getElevatorPosition(self):
+        return self.talonfx.get_position().value_as_double
+
     def getTalon(self) -> hardware.TalonFX:
         self.talonfx = hardware.TalonFX(10, "canivore")
         return self.talonfx
