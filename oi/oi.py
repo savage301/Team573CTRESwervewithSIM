@@ -10,6 +10,7 @@ from commands2 import (
 	FunctionalCommand,
 )
 import commands.elevator
+import commands.drivetrain
 
 import commands
 import config
@@ -17,6 +18,7 @@ from oi.keymap import Controllers, Keymap
 
 import constants
 from robotcontainer import Robot
+import robotcontainer
 
 
 
@@ -36,3 +38,4 @@ class OI:
     #This can be empty as SwerveDriveCustome command is set to run by default in teleopinit.
 	
 Keymap.Elevator.setLevel3.whileTrue(commands.elevator.setPosition(Robot.elevator,position=10))
+

@@ -12,11 +12,11 @@ from commands2.sysid import SysIdRoutine
 from generated.tuner_constants import TunerConstants
 from telemetry import Telemetry
 
-from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.auto import AutoBuilder, NamedCommands, RobotConfig, PathConstraints
 from pathplannerlib.events import EventTrigger
 from phoenix6 import swerve
 from wpilib import DriverStation, SmartDashboard, Mechanism2d, MechanismLigament2d
-from wpimath.geometry import Rotation2d
+from wpimath.geometry import Rotation2d, Pose2d
 from wpimath.units import rotationsToRadians
 from phoenix6 import hardware, controls, configs, StatusCode
 
@@ -24,12 +24,14 @@ import config
 from ntcore import NetworkTableInstance
 import subsystems
 import commands.elevator
-
+import commands.drivetrain
+import constants
 
 
 class Robot:
     # Defines all subsystems used in the robot, these are used to access the subsystems in commands and other files.
     elevator = subsystems.Elevator()
+
 
 
 class RobotContainer:
@@ -126,15 +128,9 @@ class RobotContainer:
         Trigger(DriverStation.isDisabled).whileTrue(
             self.drivetrain.apply_request(lambda: idle).ignoringDisable(True)
         )
-
-        self._joystick.a().whileTrue(self.drivetrain.apply_request(lambda: self._brake))
-        self._joystick.b().whileTrue(
-            self.drivetrain.apply_request(
-                lambda: self._point.with_module_direction(
-                    Rotation2d(-self._joystick.getLeftY(), -self._joystick.getLeftX())
-                )
-            )
-        )
+        self._joystick.y().whileTrue(commands.drive_to_nearest_HP_station(self.drivetrain))
+        self._joystick.x().whileTrue(commands.drive_to_nearest_reef_pos(self.drivetrain, left=True))
+        self._joystick.b().whileTrue(commands.drive_to_nearest_reef_pos(self.drivetrain, left=False))
 
         self._joystick.pov(0).whileTrue(
             self.drivetrain.apply_request(

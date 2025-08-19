@@ -8,6 +8,9 @@ from typing import Callable, overload
 from wpilib import DriverStation, Notifier, RobotController
 from wpilib.sysid import SysIdRoutineLog
 from wpimath.geometry import Pose2d, Rotation2d
+from pathplannerlib.path import PathPlannerPath, PathConstraints, GoalEndState
+
+
 
 
 class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
@@ -349,3 +352,31 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
         :type vision_measurement_std_devs:  tuple[float, float, float] | None
         """
         swerve.SwerveDrivetrain.add_vision_measurement(self, vision_robot_pose, utils.fpga_to_current_time(timestamp), vision_measurement_std_devs)
+    
+
+    def generate_path(self):
+
+                # Create a list of waypoints from poses. Each pose represents one waypoint.
+        # The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+        waypoints = PathPlannerPath.waypointsFromPoses([
+            Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
+            Pose2d(3.0, 1.0, Rotation2d.fromDegrees(0)),
+            Pose2d(5.0, 3.0, Rotation2d.fromDegrees(90))]
+        )
+
+        constraints = PathConstraints(3.0, 3.0, 2 * math.pi, 4 * math.pi) # The constraints for this path.
+        # constraints = PathConstraints.unlimitedConstraints(12.0) # You can also use unlimited constraints, only limited by motor torque and nominal battery voltage
+
+        # Create the path using the waypoints created above
+        path = PathPlannerPath(
+            waypoints,
+            constraints,
+            None, # The ideal starting state, this is only relevant for pre-planned paths, so can be None for on-the-fly paths.
+            GoalEndState(0.0, Rotation2d.fromDegrees(-90)) # Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+        )
+
+        # Prevent the path from being flipped if the coordinates are already correct
+        path.preventFlipping = True
+        print(path)
+
+        return path

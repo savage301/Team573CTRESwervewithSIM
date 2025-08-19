@@ -19,6 +19,7 @@ from wpimath.geometry import Pose2d, Rotation2d
 
 import oi.oi
 import subsystems
+import config, constants
 
 class MyRobot(commands2.TimedCommandRobot):
     """
@@ -39,6 +40,8 @@ class MyRobot(commands2.TimedCommandRobot):
         self.container = RobotContainer()
         self.container.drivetrain.reset_pose(Pose2d(5,5,Rotation2d(0)))
 
+        #Initialize the items to SmartDashboard
+        wpilib.SmartDashboard.putBoolean("Reef Align", False)
 
         oi.oi.OI.map_controls()
         # Init Simulation specifics
@@ -77,6 +80,8 @@ class MyRobot(commands2.TimedCommandRobot):
 
     def autonomousInit(self) -> None:
         """This autonomous runs the autonomous command selected by your RobotContainer class."""
+        self.alliance = wpilib.DriverStation.getAlliance() #Get Alliance color from DS
+        config.Alliance.blue_team = wpilib.DriverStation.Alliance.kBlue == self.alliance #Set a config value to this color used in automous selection 
         self.autonomousCommand = self.container.getAutonomousCommand()
 
         if self.autonomousCommand:
@@ -91,13 +96,14 @@ class MyRobot(commands2.TimedCommandRobot):
         # teleop starts running. If you want the autonomous to
         # continue until interrupted by another command, remove
         # this line or comment it out.
+        self.alliance = wpilib.DriverStation.getAlliance() #Get Alliance color from DS
+        config.Alliance.blue_team = wpilib.DriverStation.Alliance.kBlue == self.alliance #Set a config value to this color used in automous selection
         if self.autonomousCommand:
             self.autonomousCommand.cancel()
 
     def teleopPeriodic(self) -> None:
         """This function is called periodically during operator control"""
-        #pass
-
+        pass
 
     def testInit(self) -> None:
         # Cancels all running commands at the start of test mode
