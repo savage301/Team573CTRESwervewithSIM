@@ -159,9 +159,9 @@ class RobotContainer:
         )
 
         # reset the field-centric heading on left bumper press
-        self._joystick.leftBumper().onTrue(
-            self.drivetrain.runOnce(lambda: self.drivetrain.seed_field_centric())
-        )
+        #self._joystick.leftBumper().onTrue(
+        #    self.drivetrain.runOnce(lambda: self.drivetrain.seed_field_centric())
+        #)
 
         self.drivetrain.register_telemetry(
             lambda state: self._logger.telemeterize(state)

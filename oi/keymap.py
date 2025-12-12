@@ -19,7 +19,8 @@ class Controllers:
 #-- Create keymap class --
 class Keymap:
     class Elevator:
-        setLevel3 = commands2.button.JoystickButton(Controllers.DRIVER_CONTROLLER, controllerDRIVER.Y)
+        setLevel3 = commands2.button.JoystickButton(Controllers.DRIVER_CONTROLLER, controllerDRIVER.RB)
+        setLevel1 = commands2.button.JoystickButton(Controllers.DRIVER_CONTROLLER, controllerDRIVER.LB)
 
     class Drivetrain:
         followPath = commands2.button.JoystickButton(Controllers.DRIVER_CONTROLLER, controllerDRIVER.A)

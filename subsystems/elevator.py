@@ -12,7 +12,7 @@ class Elevator(commands2.SubsystemBase):
         # Elevator Example Section
         #Creat 2d Mechanism for visualization of simulation
         self.mech = Mechanism2d(3,3)
-        self.root = self.mech.getRoot("Elevator",2,0)
+        self.root = self.mech.getRoot("Elevator",1.5,0)
         self.elevator = self.root.appendLigament("elevator", config.Elevator.MinLength,90)
         SmartDashboard.putData("Mech2d", self.mech)
 
