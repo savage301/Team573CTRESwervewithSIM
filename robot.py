@@ -62,8 +62,8 @@ class MyRobot(commands2.TimedCommandRobot):
 
         
         if wpilib.RobotBase.isSimulation():
-            self.visionSim.update(self.container.drivetrain.get_state().pose)
-            self.cameravis = self.visionSim.getDebugField()
+            self.visionSim.update(self.container.drivetrain.get_state().pose) # type: ignore
+            self.cameravis = self.visionSim.getDebugField() # type: ignore
         
         #print("Current Angle: ", self.container.drivetrain.get_state().pose.rotation().degrees())
         self.add_vision_to_pose_esimate()
@@ -118,7 +118,8 @@ class MyRobot(commands2.TimedCommandRobot):
                 if esti_pose is not None:
                     relative = esti_pose.relativeTo(current_pose)
                     dist = (relative.X()**2 + relative.Y()**2)**(1/2)
-                    if  dist < 1:
+                    if  dist < 0.5:
                         self.container.drivetrain.add_vision_measurement(vision_est[0],vision_est[1],vision_est[2])
+                        #print(vision_est[2])
                         #print("Odo Pose: ", self.container.drivetrain.get_state().pose, "Vision Est Pose", vision_est[0])
         

@@ -34,13 +34,13 @@ class Elevator:
 class vision_settings:
     #These are the ratio to get std dev for the vision system based on trust where 1 is the most trustworthy and 0 is the least
     #So eahc is trust_ratio * (1-trust) + trust_min
-    Xtrust_ratio = 0.7
-    Ytrust_ratio = 0.7
-    Rtrust_ratio = 0.7
-    #This is the minumum value for the std dev for any vision mesaurement
-    Xtrust_min = 0.1
-    Ytrust_min = 0.1
-    Rtrust_min = 0.1
+    stdXtrust_ratio = 5
+    stdYtrust_ratio = 5
+    stdRtrust_ratio = 5
+    #This is the minumum value for the std dev based on trust trust for any vision mesaurement
+    stdXtrust_min = 0.7
+    stdYtrust_min = 0.7
+    stdRtrust_min = 1.5
 
     #These are settings for trust based on distance from the target
     #The trust is a value from 0 to 1 where 1 is the most trustworthy and 0 is the least

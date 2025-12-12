@@ -5,7 +5,7 @@ from wpimath.geometry import Pose2d
 from photonlibpy.photonCamera import PhotonCamera #VisionLEDMode
 from vision.fieldTagLayout import FieldTagLayout
 from vision.vision_estimator import VisionEstimator
-from wpimath.geometry import Pose3d, Translation3d, Rotation3d, Transform3d
+from wpimath.geometry import Pose3d, Translation3d, Rotation3d, Transform3d, Transform2d
 import math
 from wpilib import Timer
 import config
@@ -73,14 +73,13 @@ class WrapperedPhotonCamera:
                 tagFieldPose = FieldTagLayout().lookup(tgtID)
                 #print(tagFieldPose)
                 if tagFieldPose is not None:
-                 
                     # Only handle known tags
                     poseCandidates:list[Pose2d,float] = []
-                    #print(tgtID)
+        
                     self.targetEstimates.append([tgtID, target.getBestCameraToTarget()])
                     poseCandidates.append([
                         self._toFieldPose(tagFieldPose, target.getBestCameraToTarget()),
-                        1]
+                        self._toFieldPose(tagFieldPose, target.getBestCameraToTarget()).relativeTo(tagFieldPose.toPose2d()).translation().norm()] ####################################################################################
                     )
 
                     filteredCandidates:list[Pose2d,float] = []
@@ -110,9 +109,8 @@ class WrapperedPhotonCamera:
                             trust = 0
                         if trust > 1:
                             trust = 1
-                        if trust > 0.75:
-                            self.poseEstimates.append(
-                                CameraPoseObservation(obsTime, bestCandidate,trust)
+                        self.poseEstimates.append(
+                            CameraPoseObservation(obsTime, bestCandidate,trust)
                             )
 
     def getPoseEstimates(self):
@@ -163,12 +161,18 @@ class PhotonVisionController(VisionEstimator):
                 lastpose = est_pose.estFieldPose
                 lasttime= est_pose.time
                 lasttrust= est_pose.trustworthiness
-
                 if lasttrust > self.trust:
                     self.pose = lastpose
                     self.timestamp = lasttime
                     self.trust = lasttrust    
-                    self.std = (0.9,0.9,0.9)  
+
+                    stdX = (1-self.trust) * config.vision_settings.stdXtrust_ratio + config.vision_settings.stdXtrust_min
+                    stdY = (1-self.trust) * config.vision_settings.stdYtrust_ratio + config.vision_settings.stdYtrust_min
+                    stdT = (1-self.trust) * config.vision_settings.stdRtrust_ratio + config.vision_settings.stdRtrust_min
+
+                    #Look into using trust vs std dev
+                    #print("Trust: ", self.trust)
+                    self.std = (stdX,stdY,stdT)  
 
             vision_estimator_list.append((self.pose,self.timestamp,self.std))
             
