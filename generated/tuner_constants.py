@@ -19,7 +19,7 @@ class TunerConstants:
         .with_k_i(0)
         .with_k_d(0.5)
         .with_k_s(0.1)
-        .with_k_v(1.91)
+        .with_k_v(3.21)
         .with_k_a(0)
         .with_static_feedforward_sign(signals.StaticFeedforwardSignValue.USE_CLOSED_LOOP_SIGN)
     )
@@ -61,7 +61,7 @@ class TunerConstants:
         configs.CurrentLimitsConfigs()
         # Swerve azimuth does not require much torque output, so we can set a relatively low
         # stator current limit to help avoid brownouts without impacting performance.
-        .with_stator_current_limit(60.0).with_stator_current_limit_enable(True)
+        .with_stator_current_limit(60).with_stator_current_limit_enable(True)
     )
     _encoder_initial_configs = configs.CANcoderConfiguration()
     # Configs for the Pigeon 2; leave this None to skip applying Pigeon 2 configs
@@ -73,15 +73,15 @@ class TunerConstants:
 
     # Theoretical free speed (m/s) at 12 V applied output;
     # This needs to be tuned to your individual robot
-    speed_at_12_volts: units.meters_per_second = 4.54
+    speed_at_12_volts: units.meters_per_second = 6.84
 
     # Every 1 rotation of the azimuth results in _couple_ratio drive motor turns;
     # This may need to be tuned to your individual robot
-    _couple_ratio = 3.8181818181818183
+    _couple_ratio = 0
 
-    _drive_gear_ratio = 7.363636363636365
-    _steer_gear_ratio = 15.42857142857143
-    _wheel_radius: units.meter = inchesToMeters(2.167)
+    _drive_gear_ratio = 4.666666666666667
+    _steer_gear_ratio = 25.9
+    _wheel_radius: units.meter = inchesToMeters(2)
 
     _invert_left_side = False
     _invert_right_side = True
