@@ -10,8 +10,8 @@ def photonvision_sim_setup():
         visionSim = pv_sim.VisionSystemSim("main")
 
         #Add field tags to the sim system
-        tagLayout = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeWelded)
-        visionSim.addAprilTags(tagLayout)
+        #tagLayout = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeWelded)
+        #visionSim.addAprilTags(tagLayout)
 
 
         #setup sim camera properties
