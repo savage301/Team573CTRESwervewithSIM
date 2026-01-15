@@ -12,6 +12,7 @@ import wpiutil
 
 from robotcontainer import RobotContainer, Robot
 from vision import vision_sim
+from vision.vision_estimator import VisionEstimator
 from telemetry import Telemetry
 
 from config import Cameras, Elevator
@@ -38,7 +39,7 @@ class MyRobot(commands2.TimedCommandRobot):
         # Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         # autonomous chooser on the dashboard.
         self.container = RobotContainer()
-        self.container.drivetrain.reset_pose(Pose2d(5,5,Rotation2d(0)))
+        self.container.drivetrain.reset_pose(Pose2d(2,2,Rotation2d(0)))
 
         #Initialize the items to SmartDashboard
         wpilib.SmartDashboard.putBoolean("Reef Align", False)
@@ -47,6 +48,7 @@ class MyRobot(commands2.TimedCommandRobot):
         # Init Simulation specifics
         if wpilib.RobotBase.isSimulation():
             self.visionSim = vision_sim.photonvision_sim_setup() #Setup sim vision system
+
 
     def robotPeriodic(self) -> None:
         """This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -110,16 +112,24 @@ class MyRobot(commands2.TimedCommandRobot):
         commands2.CommandScheduler.getInstance().cancelAll()
 
     def add_vision_to_pose_esimate(self):
-        current_pose = self.container.drivetrain.get_state().pose
-        vision_ests = self.container._vision_est.get_estimated_robot_pose(current_pose)
-        if vision_ests is not None:
-            for vision_est in vision_ests:
-                esti_pose = vision_est[0]
-                if esti_pose is not None:
-                    relative = esti_pose.relativeTo(current_pose)
-                    dist = (relative.X()**2 + relative.Y()**2)**(1/2)
-                    if  dist < 0.5:
-                        self.container.drivetrain.add_vision_measurement(vision_est[0],vision_est[1],vision_est[2])
-                        #print(vision_est[2])
-                        #print("Odo Pose: ", self.container.drivetrain.get_state().pose, "Vision Est Pose", vision_est[0])
+
+        vision_est = self.container._vision_est.get_estimated_robot_pose()
+        if vision_est is not None:
+            self.container.drivetrain.add_vision_measurement(vision_est[0],vision_est[1])
+
+
+
+
+        # current_pose = self.container.drivetrain.get_state().pose
+        # vision_ests = self.container._vision_est.get_estimated_robot_pose(current_pose)
+        # if vision_ests is not None:
+        #     for vision_est in vision_ests:
+        #         esti_pose = vision_est[0]
+        #         if esti_pose is not None:
+        #             relative = esti_pose.relativeTo(current_pose)
+        #             dist = (relative.X()**2 + relative.Y()**2)**(1/2)
+        #             if  dist < 0.5:
+        #                 self.container.drivetrain.add_vision_measurement(vision_est[0],vision_est[1],vision_est[2])
+        #                 #print(vision_est[2])
+        #                 #print("Odo Pose: ", self.container.drivetrain.get_state().pose, "Vision Est Pose", vision_est[0])
         
