@@ -26,8 +26,8 @@ class VisionEstimator:
         camEstPose = None
         for result in self.cam.getAllUnreadResults():
             camEstPose = self.camPoseEst.estimateCoprocMultiTagPose(result)
-            if camEstPose is None:
-                camEstPose = self.camPoseEst.estimateLowestAmbiguityPose(result)
+            # if camEstPose is None:
+                # camEstPose = self.camPoseEst.estimateLowestAmbiguityPose(result)
         if camEstPose is not None:
             return camEstPose.estimatedPose.toPose2d(), camEstPose.timestampSeconds
         else:
