@@ -2,16 +2,22 @@ import photonlibpy.simulation as pv_sim
 from robotpy_apriltag import AprilTagField, AprilTagFieldLayout
 from wpimath.geometry import Rotation2d 
 from config import Cameras
+import constants
+import wpilib
+import os
 
 def photonvision_sim_setup():
     print("Setting up photonvision sim...")
     try:
         #setup sim vision system
         visionSim = pv_sim.VisionSystemSim("main")
+        # deploy_dir = "C:\\Users\\savag\\OneDrive\\Documents\\GitHub\\Team573CTRESwervewithSIM\\"
+        # json_path = os.path.join(deploy_dir, "vision\\2026-rebuilt-welded.json")
+        # tagLayout = AprilTagFieldLayout(json_path)
 
-        #Add field tags to the sim system
-        #tagLayout = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeWelded)
-        #visionSim.addAprilTags(tagLayout)
+        #Add field tags to the sim system       
+        tagLayout = AprilTagFieldLayout.loadField(AprilTagField.kDefaultField)
+        visionSim.addAprilTags(tagLayout)
 
 
         #setup sim camera properties
@@ -23,13 +29,13 @@ def photonvision_sim_setup():
         camera_prop.setLatencyStdDev(0.005) #Std dev of latency in seconds.
 
         #Setup all cameras in the sim system
-        for camera in Cameras.vision_controller.cameras:
-            print(camera.cam_name)
-            camera_sim = pv_sim.PhotonCameraSim(camera.cam,camera_prop)
-            #camera_sim.enableRawStream(True)
-            #camera_sim.enableProcessedStream(True)
-            #camera_sim.enableDrawWireframe(True)
-            visionSim.addCamera(camera_sim,camera.robotToCam)
+    
+        print("Camera 1")
+        camera_sim = pv_sim.PhotonCameraSim(Cameras.camera1,camera_prop)
+        #camera_sim.enableRawStream(True)
+        #camera_sim.enableProcessedStream(True)
+        #camera_sim.enableDrawWireframe(True)
+        visionSim.addCamera(camera_sim,constants.Robot_To_Camera1)
 
 
     except Exception as e:
