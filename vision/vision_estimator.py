@@ -3,7 +3,7 @@ from wpilib import Timer
 from photonlibpy import PhotonCamera, PhotonPoseEstimator
 import constants
 from vision.fieldTagLayout import FieldTagLayout, AprilTagFieldLayout, AprilTagField
-
+import os
 
 class VisionEstimator:
     """
@@ -11,9 +11,13 @@ class VisionEstimator:
     """
 
     def __init__(self):
+        # deploy_dir = "C:\\Users\\savag\\OneDrive\\Documents\\GitHub\\Team573CTRESwervewithSIM\\"
+        # json_path = os.path.join(deploy_dir, "vision\\2026-rebuilt-welded.json")
+        # tagLayout = AprilTagFieldLayout(json_path)
+        tagLayout = AprilTagFieldLayout.loadField(AprilTagField.kDefaultField)
         self.cam = PhotonCamera('Camera 1')
         self.camPoseEst = PhotonPoseEstimator(
-            AprilTagFieldLayout.loadField(AprilTagField.kDefaultField),
+            tagLayout,
             constants.Robot_To_Camera1,
         )
 

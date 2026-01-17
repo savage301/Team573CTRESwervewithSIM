@@ -3,15 +3,20 @@ from robotpy_apriltag import AprilTagField, AprilTagFieldLayout
 from wpimath.geometry import Rotation2d 
 from config import Cameras
 import constants
+import wpilib
+import os
 
 def photonvision_sim_setup():
     print("Setting up photonvision sim...")
     try:
         #setup sim vision system
         visionSim = pv_sim.VisionSystemSim("main")
+        # deploy_dir = "C:\\Users\\savag\\OneDrive\\Documents\\GitHub\\Team573CTRESwervewithSIM\\"
+        # json_path = os.path.join(deploy_dir, "vision\\2026-rebuilt-welded.json")
+        # tagLayout = AprilTagFieldLayout(json_path)
 
-        #Add field tags to the sim system
-        tagLayout = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeWelded)
+        #Add field tags to the sim system       
+        tagLayout = AprilTagFieldLayout.loadField(AprilTagField.kDefaultField)
         visionSim.addAprilTags(tagLayout)
 
 
